@@ -1,0 +1,90 @@
+1.3.1	(20090811)
+	- add some more methods to the interface file
+	- print the number of resets during the test run (cumulative)
+        - more useful measurements for both runs and individual tests
+        - export this to TestApp, default to no timing measurements on phone
+
+1.3.0	(20090619)
+	- make more members in NFCIPAbstract private when they don't need to be 
+	  public
+	- move setting transmissionMode to NFCIPAbstract
+	- add dummy block constant to NFCIPAbstract and add a check method to
+	  NFCIPUtils
+	- update some JavaDoc comments
+	- add a rawClose method to be implemented by the NFCIPConnection sub 
+	  classes
+	- fix the debugMessage stuff, take it out of NFCIPUtils and put it in 
+	  NFCIPAbstract & rename it to "log" instead of "debug"
+	- take some irrelevant stuff out of the interface
+	- make everything more consistent
+	- update Ant file 
+	- add release script to tools/ directory 
+	- revise README document
+	
+1.2.0	(20090614)
+	- add javadoc target to build file
+	- remove resetNumberOfResets method
+	- now also send/receive the upper bound (maxDataLength) bytes
+	- more public methods to obtain information about the data transfer
+	  like number of bytes, number of low level sends
+	- return data is now always an empty array, never null
+	- fix getNumberOfResets to actually work as planned
+	- merge initiator/target test in test class
+	- merge nfcip-java and nfcip-javame in this package:
+	  - create an interface which both java se and java me code implement
+	  - create an abstract class that both java se and java me code extend
+	    with the shared code
+	  - make the test class usable for both java se and java me
+	  - update the build file	
+	  - the MIDlet is now a complete separate project that simply links
+	    to the nfcip-javame library
+	  - add tools directory with download script
+	  - add lib directory with library configuration
+	  - redo handling of debugging to use PrintWriter now for both Java ME and
+	    Java SE
+	  - increase version number to be above both nfcip-java and nfcip-javame
+	- first attempt to create a "fake" target and initiator mode, the phone's 
+	  target mode is very flaky so this will actually make the phone initiator 
+	  while it behaves as a target (receive data first, then send)
+	- cleanup debug printing
+	- create a util method to print the mode of operation
+	- create methods to ask whether or not the mode is "initiator" or "target"
+	  sees fake initiator also as initiator and fake target as target	   
+	- updated Javadoc, move as much as possible to the NFCIPInterface
+	- update the README file to reflect the new situation
+	- add licensing information in every source file
+	- remove linked javadoc from abstract class
+	- better naming: messages are now API calls to send/receive and blocks are 
+	  the low level blocks that are sent between initiator and target 
+	- make the debugLevel for the NFCIPTest class configurable through the 
+	  constructor
+	- block size is implementation specific, so put it in the NFCIPConnection
+	  classes and not in the abstract class. We default it to 100 bytes, which
+	  is overridden by the NFCIPConnection for SE and ME to 240 bytes.
+	- change the name of the JAR files to nfcip-java-se-VERSION.jar and 
+	  nfcip-java-me-VERSION.jar
+	- move all tests to nfcip-java-tests project to make this just contain the
+      library
+	- update README to indicate radio is weak in phone
+	
+1.0.2	(20090605)
+	- print some performance metrics for every test run (-r) on the 
+	  command line. Can be used by "gnuplot"
+	- fix some more cli parameter consistency in names (reader -> 
+	  terminal etc.)
+	- keep track of the number of connection resets required
+	- update the test to make the number of runs be within the same
+	  connection, so no new connection between rounds
+	- sleep after a release of target to turn off the radio for a while
+	  which helps with reconnecting to the phone that needs a little 
+	  more time to reset target mode
+	- fix command line parameters for debugging
+	
+1.0.1	(20090420)
+	- make blockSize configurable by providing setBlockSize method
+	- add code to make this available from command line
+	- add platform requirements to README
+	- added this CHANGELOG
+	
+1.0		(20090418)
+	- initial release
