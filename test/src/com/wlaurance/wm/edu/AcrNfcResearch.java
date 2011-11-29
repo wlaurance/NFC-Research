@@ -6,27 +6,24 @@ import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.TerminalFactory;
 
-import ds.nfcip.se.NFCIPConnection;
-
 public class AcrNfcResearch {
-	private NFCIPConnection connection = null;
+	
 
 	public static void main(String args[]) {
 		List<CardTerminal> terminals = null;
+		ACRNfcConnection connection = null;
 		TerminalFactory fac = TerminalFactory.getDefault();
 		try {
 			terminals = fac.terminals().list();
-			System.out.println(terminals);
 		} catch (CardException e) {
 			System.err.println("No terminals detected");
 			e.printStackTrace();
 		}
 		printTerminalStatus(terminals);
+		connection = new ACRNfcConnection();
+		connection.run();
 	}
 
-	public void initConnection() {
-		connection = new NFCIPConnection();
-	}
 
 	public static void printTerminalStatus(List<CardTerminal> t) {
 		if (t != null) {

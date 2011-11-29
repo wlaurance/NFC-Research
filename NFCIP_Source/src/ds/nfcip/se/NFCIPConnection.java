@@ -79,7 +79,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 				card = terminal.connect("*");
 				ch = card.getBasicChannel();
 			} else {
-				throw new NFCIPException("unsupported device");
+				throw new NFCIPException("Card Not Present");
 			}
 		} catch (CardException e) {
 			throw new NFCIPException("problem with connecting to reader");
@@ -294,7 +294,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		}
 	}
 
-	private String getFirmwareVersion() throws NFCIPException {
+	public String getFirmwareVersion() throws NFCIPException {
 		try {
 			CommandAPDU c = new CommandAPDU(GET_FIRMWARE_VERSION);
 			if (ch == null) {
