@@ -7,7 +7,10 @@ public class ACRNfcConnection {
 
 	final NFCIPConnection connection1 = new NFCIPConnection();
 	final NFCIPConnection connection2 = new NFCIPConnection();
-	int LOG_LEVEL = 3;
+	int LOG_LEVEL = 5;
+	
+	byte MIFARE_1K_BLOCK = 0x04;
+	byte MIFARE_1K_BYTES = (byte) 0x10;
 
 	public void run() {
 
@@ -16,19 +19,20 @@ public class ACRNfcConnection {
 			@Override
 			public void run() {
 				setConnection1(1);
+				readCard();
 			}
 
 		}).start();
 
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				setConnection2(2);
-			}
-
-		}).start();
-
+	}
+	
+	private void readCard(){
+		try {
+			System.out.println(connection1.readCard(this.MIFARE_1K_BLOCK, this.MIFARE_1K_BYTES));
+		} catch (NFCIPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void setConnection1(int terminal) {
@@ -38,9 +42,7 @@ public class ACRNfcConnection {
 			connection1.setLogging(System.out, this.LOG_LEVEL);
 			connection1.setMode(NFCIPConnection.INITIATOR);
 			System.out.println(connection1.getMode());
-			System.out.println(connection1.getFirmwareVersion());
-			connection1.send(getByteData());
-			// System.out.println("Recieved " + connection1.receive());
+
 		} catch (NFCIPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,7 +62,7 @@ public class ACRNfcConnection {
 	}
 
 	private byte[] getByteData() {
-		byte[] data = new byte[10];
+		byte[] data = new byte[200];
 		for (int k = 0; k < data.length; k++)
 			data[k] = (byte) (255 - k);
 		return data;

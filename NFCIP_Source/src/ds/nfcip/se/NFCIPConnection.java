@@ -38,8 +38,8 @@ import ds.nfcip.NFCIPUtils;
 /**
  * Java SE implementation of NFCIPConnection for the ACS ACR122 NFC reader
  * 
- * @author F. Kooman <F.Kooman@student.science.ru.nl>
- * 
+ * @author F. Kooman <F.Kooman@student.science.ru.nl> Additional stuff by W.
+ *         Laurance <w.laurance@gmail.com>
  */
 public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 
@@ -56,6 +56,15 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	// private final byte TG_SET_META_DATA = (byte) 0x94;
 	private final byte[] GET_FIRMWARE_VERSION = { (byte) 0xff, (byte) 0x00,
 			(byte) 0x48, (byte) 0x00, (byte) 0x00 };
+
+	/**
+	 * New byte arrays added by Will Laurance <w.laurance@gmail.com>
+	 */
+
+	private final byte[] READ_CARD_DATA = { (byte) 0xff, (byte) 0xb0,
+			(byte) 0x00, (byte) 0x00, (byte) 0x00 };
+	
+	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x82 }; 
 
 	/**
 	 * temporary buffer for storing data from sendCommand when in initiator mode
@@ -118,7 +127,8 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		byte[] initiatorPayload = { 0x00, 0x02, 0x01, 0x00, (byte) 0xff,
 				(byte) 0xff, 0x00, 0x00 }; // passive, 424kbps
 		// byte[] initiatorPayload = { 0x01, 0x00, 0x00 }; // active, 106kbps
-		// byte[] initiatorPayload = { 0x01, 0x02, 0x00 }; // active, 424kbps
+		// byte[] initiatorPayload = { 0x01, 0x02, 0x00, (byte) 0xff,(byte)
+		// 0xff, 0x00, 0x00 }; // active, 424kbps
 
 		transmit(IN_JUMP_FOR_DEP, initiatorPayload);
 	}
@@ -303,6 +313,51 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 			return new String(ch.transmit(c).getBytes());
 		} catch (CardException e) {
 			throw new NFCIPException("problem requesting firmware version");
+		}
+	}
+
+	/**
+	 * ========================================================================
+	 * =========== New Stuff by Will Laurance, <w.laurance@gmail.com>
+	 * 
+	 */
+
+	public ResponseAPDU readCard(byte blockNumber, byte numToRead)
+			throws NFCIPException {
+		byte[] cp = READ_CARD_DATA;
+		cp[3] = blockNumber;
+		cp[4] = numToRead;
+		this.printByteArray(cp);
+		try {
+			CommandAPDU d = new CommandAPDU(cp);
+			if (ch == null) {
+				throw new NFCIPException("channel not open");
+			}
+			return ch.transmit(d);
+		} catch (CardException e) {
+			throw new NFCIPException("problem reading data");
+		}
+	}
+	
+	public ResponseAPDU loadAuthenticationKeys(byte keyStruct, byte keyNumber, byte[] key) throws NFCIPException{
+		byte[] cp = READ_CARD_DATA;
+		cp[3] = keyStruct;
+		cp[4] = keyNumber;
+		try {
+			CommandAPDU d = new CommandAPDU(cp);
+			System.out.println(d);
+			if (ch == null) {
+				throw new NFCIPException("channel not open");
+			}
+			return ch.transmit(d);
+		} catch (CardException e) {
+			throw new NFCIPException("problem reading data");
+		}
+	}
+	
+	private void printByteArray(byte[] array){
+		for (int i = 0; i < array.length; i++){
+			System.out.println((byte) array[i]);
 		}
 	}
 }
