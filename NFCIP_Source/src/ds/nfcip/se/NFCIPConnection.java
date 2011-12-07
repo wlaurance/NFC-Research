@@ -60,17 +60,26 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	/**
 	 * New byte arrays added by Will Laurance <w.laurance@gmail.com>
 	 */
+	private final byte KEY_NUMBER = (byte) 0x00;
+	private final int AUTH_DATA_BLOCK_NUMBER = 6;
+	public final static byte[] KEY = { (byte) 0xFF,(byte) 0xFF,(byte) 0xFF,(byte) 0xFF,(byte) 0xFF,(byte) 0xFF};
+	private final byte KEY_TYPE = (byte) 0x60;
+	private final byte VERSION = (byte) 0x01;
 
 	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xCA,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00 };
 
-	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x82,
-			(byte) 0x00, (byte) 0x00, (byte) 0x06, (byte) 0x05, (byte) 0x01, (byte) 0x00,
-			(byte) 0x01, (byte) 0x61, (byte) 0x00 };
+	private final byte[] LOAD_AUTHENTICATION_HEADER = { (byte) 0xff, (byte) 0x82,
+			(byte) 0x00, KEY_NUMBER, (byte) 0x06 };
+	
+	private byte[] LOAD_AUTHENTICATION_KEYS = new byte[this.LOAD_AUTHENTICATION_HEADER.length + this.KEY.length];
 
-	private final byte[] AUTHENTICATE = { (byte) 0xff, (byte) 0x86,
-			(byte) 0x00, (byte) 0x00, (byte) 0x05, (byte) 0x01, (byte) 0x00,
-			(byte) 0x01, (byte) 0x61, (byte) 0x00 };
+	private final byte[] DO_AUTHENTICATE = { (byte) 0xff, (byte) 0x86,
+			(byte) 0x00, (byte) 0x00, (byte) 0x05, VERSION, (byte) 0x00,
+			(byte) 0x01, KEY_TYPE, KEY_NUMBER };
+
+	private final byte[] UPDATE_BIN_BLOCKS = { (byte) 0xff, (byte) 0xD6,
+			(byte) 0x00, (byte) 0x00, (byte) 0x10 };
 	/**
 	 * temporary buffer for storing data from sendCommand when in initiator mode
 	 */
@@ -82,6 +91,17 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	public NFCIPConnection() {
 		super();
 		blockSize = 240;
+		genAuthHeader();
+	}
+
+	private void genAuthHeader() {
+		for (int i = 0; i < this.LOAD_AUTHENTICATION_HEADER.length + this.KEY.length; i++){
+			if(0 <= i && i < this.LOAD_AUTHENTICATION_HEADER.length){
+				this.LOAD_AUTHENTICATION_KEYS[i] = this.LOAD_AUTHENTICATION_HEADER[i];
+			} else {
+				this.LOAD_AUTHENTICATION_KEYS[i] = this.KEY[i-this.LOAD_AUTHENTICATION_HEADER.length];
+			}
+		}
 	}
 
 	private void connectToTerminal() throws NFCIPException {
@@ -332,7 +352,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		byte[] cp = READ_CARD_DATA;
 		cp[3] = blockNumber;
 		cp[4] = numToRead;
-		this.printByteArray(cp);
+		printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
 			System.out.println(d.toString());
@@ -345,13 +365,30 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		}
 	}
 
-	public ResponseAPDU loadAuthenticationKeys(byte[] key) throws NFCIPException {
+	public ResponseAPDU loadAuthenticationKeys(byte[] key)
+			throws NFCIPException {
 		byte[] cp = this.LOAD_AUTHENTICATION_KEYS;
 		if (key.length != 6)
 			throw new NFCIPException("supplied key must be 6 bytes");
-		for (int i = 0; i < key.length ; i++){
+		for (int i = 0; i < key.length; i++) {
 			cp[i + 5] = key[i];
 		}
+		printByteArray(cp);
+		try {
+			CommandAPDU d = new CommandAPDU(cp);
+			System.out.println(d.toString());
+			if (ch == null) {
+				throw new NFCIPException("channel not open");
+			}
+			return ch.transmit(d);
+		} catch (CardException e) {
+			throw new NFCIPException("problem reading data");
+		}
+	}
+
+	public ResponseAPDU authenticate(byte blockNumber) throws NFCIPException {
+		byte[] cp = this.DO_AUTHENTICATE;
+		cp[AUTH_DATA_BLOCK_NUMBER] = blockNumber;
 		this.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
@@ -364,10 +401,26 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 			throw new NFCIPException("problem reading data");
 		}
 	}
-	
-	public ResponseAPDU authenticate() throws NFCIPException {
+
+	public ResponseAPDU writeBinBlocks(byte blockNum, byte[] blockData)
+			throws NFCIPException {
+		byte[] write = new byte[this.UPDATE_BIN_BLOCKS.length
+				+ blockData.length];
+		for (int i = 0; i < this.UPDATE_BIN_BLOCKS.length; i++) {
+			write[i] = this.UPDATE_BIN_BLOCKS[i];
+			if (i == 3)
+				write[i] = blockNum;
+			if (i == 4)
+				write[i] = Byte.parseByte(String.valueOf(blockData.length));
+		}
+
+		for (int i = 5; i < blockData.length + 5; i++) {
+			write[i] = blockData[i - 5];
+		}
+
+		printByteArray(write);
 		try {
-			CommandAPDU d = new CommandAPDU(this.AUTHENTICATE);
+			CommandAPDU d = new CommandAPDU(write);
 			System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
@@ -378,7 +431,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		}
 	}
 
-	private void printByteArray(byte[] array) {
+	public static void printByteArray(byte[] array) {
 		for (int i = 0; i < array.length; i++) {
 			System.out.println((byte) array[i]);
 		}

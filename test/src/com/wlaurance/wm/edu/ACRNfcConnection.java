@@ -1,5 +1,7 @@
 package com.wlaurance.wm.edu;
 
+import javax.smartcardio.ResponseAPDU;
+
 import ds.nfcip.NFCIPException;
 import ds.nfcip.se.NFCIPConnection;
 
@@ -9,9 +11,13 @@ public class ACRNfcConnection {
 	final NFCIPConnection connection2 = new NFCIPConnection();
 	int LOG_LEVEL = 5;
 
-	byte MIFARE_1K_BLOCK = 0x00;
+	byte MIFARE_1K_BLOCK = 0x01;
 	byte MIFARE_1K_BYTES = (byte) 0x04;
-	byte[] MY_KEY = {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
+
+	byte[] MY_DATA = { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+			(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+			(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+			(byte) 0xFF, (byte) 0xFF };
 
 	public void run() {
 
@@ -21,26 +27,27 @@ public class ACRNfcConnection {
 			public void run() {
 				setConnection1(1);
 				loadKeys();
-				authenticate();
 				readCard();
+				writeCardBinary((byte)0x01, MY_DATA);
+				
 			}
 
 		}).start();
 
 	}
 
-	private void authenticate(){
+	private void authenticate(byte block) {
 		try {
-			System.out.println(connection1.authenticate());
+			this.printADPU(connection1.authenticate(block));
 		} catch (NFCIPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void loadKeys() {
 		try {
-			System.out.println(connection1.loadAuthenticationKeys(MY_KEY));
+			this.printADPU(connection1.loadAuthenticationKeys(NFCIPConnection.KEY));
 		} catch (NFCIPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,8 +57,27 @@ public class ACRNfcConnection {
 
 	private void readCard() {
 		try {
-			System.out.println(connection1.readCard(this.MIFARE_1K_BLOCK,
+			this.printADPU(connection1.readCard(this.MIFARE_1K_BLOCK,
 					this.MIFARE_1K_BYTES));
+		} catch (NFCIPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void readCardBinary(byte block, byte numBytes) {
+		try {
+			this.printADPU(connection1.readCard(block, numBytes));
+		} catch (NFCIPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void writeCardBinary(byte block, byte[] data) {
+		try {
+			this.connection1.authenticate(block);
+			this.printADPU(connection1.writeBinBlocks(block, data));
 		} catch (NFCIPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,11 +110,8 @@ public class ACRNfcConnection {
 		}
 	}
 
-	private byte[] getByteData() {
-		byte[] data = new byte[200];
-		for (int k = 0; k < data.length; k++)
-			data[k] = (byte) (255 - k);
-		return data;
+	public void printADPU(ResponseAPDU r) {
+		System.out.println(r + "\n************DATA************ ");
+		NFCIPConnection.printByteArray(r.getData());
 	}
-
 }
