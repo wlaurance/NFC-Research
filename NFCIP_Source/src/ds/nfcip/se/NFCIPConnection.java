@@ -61,7 +61,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	 * New byte arrays added by Will Laurance <w.laurance@gmail.com>
 	 */
 
-	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xB0,
+	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xCA,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00 };
 
 	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x82,
@@ -273,7 +273,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	 *            the instruction byte
 	 * @return the human readable text
 	 */
-	private String instructionToString(byte instr) {
+	public String instructionToString(byte instr) {
 		switch (instr) {
 		case IN_DATA_EXCHANGE:
 			return "IN_DATA_EXCHANGE";
@@ -335,6 +335,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		this.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
+			System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
 			}
@@ -354,7 +355,20 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		this.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
-			System.out.println(d);
+			System.out.println(d.toString());
+			if (ch == null) {
+				throw new NFCIPException("channel not open");
+			}
+			return ch.transmit(d);
+		} catch (CardException e) {
+			throw new NFCIPException("problem reading data");
+		}
+	}
+	
+	public ResponseAPDU authenticate() throws NFCIPException {
+		try {
+			CommandAPDU d = new CommandAPDU(this.AUTHENTICATE);
+			System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
 			}
