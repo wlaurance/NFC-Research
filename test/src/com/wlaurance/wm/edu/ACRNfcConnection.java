@@ -11,6 +11,7 @@ public class ACRNfcConnection {
 
 	byte MIFARE_1K_BLOCK = 0x04;
 	byte MIFARE_1K_BYTES = (byte) 0x0F;
+	byte[] MY_KEY = {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
 
 	public void run() {
 
@@ -20,6 +21,7 @@ public class ACRNfcConnection {
 			public void run() {
 				setConnection1(1);
 				loadKeys();
+				readCard();
 			}
 
 		}).start();
@@ -28,7 +30,7 @@ public class ACRNfcConnection {
 
 	private void loadKeys() {
 		try {
-			System.out.println(connection1.loadAuthenticationKeys());
+			System.out.println(connection1.loadAuthenticationKeys(MY_KEY));
 		} catch (NFCIPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -64,10 +64,13 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xB0,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00 };
 
-	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x86,
-			(byte) 0x00, (byte) 0x00, (byte) 0x05, (byte) 0x01, (byte) 0x00,
+	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x82,
+			(byte) 0x00, (byte) 0x00, (byte) 0x06, (byte) 0x05, (byte) 0x01, (byte) 0x00,
 			(byte) 0x01, (byte) 0x61, (byte) 0x00 };
 
+	private final byte[] AUTHENTICATE = { (byte) 0xff, (byte) 0x86,
+			(byte) 0x00, (byte) 0x00, (byte) 0x05, (byte) 0x01, (byte) 0x00,
+			(byte) 0x01, (byte) 0x61, (byte) 0x00 };
 	/**
 	 * temporary buffer for storing data from sendCommand when in initiator mode
 	 */
@@ -341,8 +344,13 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		}
 	}
 
-	public ResponseAPDU loadAuthenticationKeys() throws NFCIPException {
+	public ResponseAPDU loadAuthenticationKeys(byte[] key) throws NFCIPException {
 		byte[] cp = this.LOAD_AUTHENTICATION_KEYS;
+		if (key.length != 6)
+			throw new NFCIPException("supplied key must be 6 bytes");
+		for (int i = 0; i < key.length ; i++){
+			cp[i + 5] = key[i];
+		}
 		this.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
