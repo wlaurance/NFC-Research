@@ -61,10 +61,12 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	 * New byte arrays added by Will Laurance <w.laurance@gmail.com>
 	 */
 
-	private final byte[] READ_CARD_DATA = { (byte) 0xff, (byte) 0xb0,
+	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xB0,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00 };
-	
-	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x82 }; 
+
+	private final byte[] LOAD_AUTHENTICATION_KEYS = { (byte) 0xff, (byte) 0x86,
+			(byte) 0x00, (byte) 0x00, (byte) 0x05, (byte) 0x01, (byte) 0x00,
+			(byte) 0x01, (byte) 0x61, (byte) 0x00 };
 
 	/**
 	 * temporary buffer for storing data from sendCommand when in initiator mode
@@ -338,11 +340,10 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 			throw new NFCIPException("problem reading data");
 		}
 	}
-	
-	public ResponseAPDU loadAuthenticationKeys(byte keyStruct, byte keyNumber, byte[] key) throws NFCIPException{
-		byte[] cp = READ_CARD_DATA;
-		cp[3] = keyStruct;
-		cp[4] = keyNumber;
+
+	public ResponseAPDU loadAuthenticationKeys() throws NFCIPException {
+		byte[] cp = this.LOAD_AUTHENTICATION_KEYS;
+		this.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
 			System.out.println(d);
@@ -354,9 +355,9 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 			throw new NFCIPException("problem reading data");
 		}
 	}
-	
-	private void printByteArray(byte[] array){
-		for (int i = 0; i < array.length; i++){
+
+	private void printByteArray(byte[] array) {
+		for (int i = 0; i < array.length; i++) {
 			System.out.println((byte) array[i]);
 		}
 	}
