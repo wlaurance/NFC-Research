@@ -432,6 +432,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	}
 
 	public static void printByteArray(byte[] array) {
-		System.out.println(new String(array));
+		for (byte a : array)
+			System.out.println(a);
 	}
 }

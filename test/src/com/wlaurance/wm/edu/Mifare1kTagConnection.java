@@ -7,6 +7,7 @@ import ds.nfcip.se.NFCIPConnection;
 public class Mifare1kTagConnection extends TagConnection{
 	ACRNfcConnection connection;
 	static final int MIFARE1K_BLOCK_SIZE = 16; 
+	static final int BLOCK_START = 1; 
 	static final int MIFARE1K_SECTOR_LENGTH = 16;
 	static final int MIFARE1K_BLOCK_PER_SECTOR = 4;
 	static final int MIFARE1K_AVAILABLE = 752;
@@ -39,8 +40,10 @@ public class Mifare1kTagConnection extends TagConnection{
 			}
 		}
 		
+		Integer block = BLOCK_START;
 		for (byte[] x : myList){
-			NFCIPConnection.printByteArray(x);
+			connection.writeCardBinary(block.byteValue(), x);
+			block++;
 		}
 		
 	}
