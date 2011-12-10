@@ -66,7 +66,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	private final byte KEY_TYPE = (byte) 0x60;
 	private final byte VERSION = (byte) 0x01;
 
-	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xCA,
+	private final byte[] READ_CARD_DATA = { (byte) 0xFF, (byte) 0xB0,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00 };
 
 	private final byte[] LOAD_AUTHENTICATION_HEADER = { (byte) 0xff, (byte) 0x82,
