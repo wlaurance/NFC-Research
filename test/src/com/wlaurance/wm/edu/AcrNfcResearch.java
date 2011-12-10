@@ -6,14 +6,18 @@ import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 
 public class AcrNfcResearch {
-	
-public static String myURL = "www.wlaurance.com";
-	
+
+	public static String myURL = "www.wlaurance.com";
+
 	public static void main(String args[]) {
 		Mifare1kTagConnection c = new Mifare1kTagConnection();
-		c.writeToCard(myURL);
+		try {
+			c.writeToCard(myURL);
+		} catch (TagConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-
 
 	public static void printTerminalStatus(List<CardTerminal> t) {
 		if (t != null) {

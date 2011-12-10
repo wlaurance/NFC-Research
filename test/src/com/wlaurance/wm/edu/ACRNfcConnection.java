@@ -18,6 +18,11 @@ public class ACRNfcConnection {
 			(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 			(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 			(byte) 0xFF, (byte) 0xBF };
+	
+	public ACRNfcConnection(){
+		setConnection1(1);
+		loadKeys();
+	}
 
 	public void run() {
 
@@ -49,7 +54,7 @@ public class ACRNfcConnection {
 
 	}
 
-	private void readCardBinary(byte block, byte numBytes) {
+	public void readCardBinary(byte block, byte numBytes) {
 		try {
 			authenticate(block);
 			this.printADPU(connection1.readCard(block, numBytes), "readCard");
@@ -59,7 +64,7 @@ public class ACRNfcConnection {
 		}
 	}
 
-	private void writeCardBinary(byte block, byte[] data) {
+	public void writeCardBinary(byte block, byte[] data) {
 		try {
 			authenticate(block);
 			this.printADPU(connection1.writeBinBlocks(block, data),

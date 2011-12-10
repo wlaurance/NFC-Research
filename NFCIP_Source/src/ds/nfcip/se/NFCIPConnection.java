@@ -389,7 +389,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	public ResponseAPDU authenticate(byte blockNumber) throws NFCIPException {
 		byte[] cp = this.DO_AUTHENTICATE;
 		cp[AUTH_DATA_BLOCK_NUMBER] = blockNumber;
-		this.printByteArray(cp);
+		NFCIPConnection.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
 			System.out.println(d.toString());
@@ -432,8 +432,6 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	}
 
 	public static void printByteArray(byte[] array) {
-		for (int i = 0; i < array.length; i++) {
-			System.out.println((byte) array[i]);
-		}
+		System.out.println(new String(array));
 	}
 }
