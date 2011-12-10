@@ -4,24 +4,14 @@ import java.util.List;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
-import javax.smartcardio.TerminalFactory;
 
 public class AcrNfcResearch {
 	
-
+public static String myURL = "www.wlaurance.com";
+	
 	public static void main(String args[]) {
-		List<CardTerminal> terminals = null;
-		ACRNfcConnection connection = null;
-		TerminalFactory fac = TerminalFactory.getDefault();
-		try {
-			terminals = fac.terminals().list();
-		} catch (CardException e) {
-			System.err.println("No terminals detected");
-			e.printStackTrace();
-		}
-		printTerminalStatus(terminals);
-		connection = new ACRNfcConnection();
-		connection.run();
+		Mifare1kTagConnection c = new Mifare1kTagConnection();
+		c.writeToCard(myURL);
 	}
 
 
