@@ -87,9 +87,11 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 
 	private CardTerminal terminal = null;
 	private CardChannel ch = null;
+	boolean DEBUG = false;
 
-	public NFCIPConnection() {
+	public NFCIPConnection(boolean debug) {
 		super();
+		DEBUG = debug;
 		blockSize = 240;
 		genAuthHeader();
 	}
@@ -352,10 +354,10 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		byte[] cp = READ_CARD_DATA;
 		cp[3] = blockNumber;
 		cp[4] = numToRead;
-		printByteArray(cp);
+		if (DEBUG) printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
-			System.out.println(d.toString());
+			if(DEBUG) System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
 			}
@@ -373,10 +375,10 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 		for (int i = 0; i < key.length; i++) {
 			cp[i + 5] = key[i];
 		}
-		printByteArray(cp);
+		if(DEBUG) printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
-			System.out.println(d.toString());
+			if(DEBUG) System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
 			}
@@ -389,10 +391,10 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	public ResponseAPDU authenticate(byte blockNumber) throws NFCIPException {
 		byte[] cp = this.DO_AUTHENTICATE;
 		cp[AUTH_DATA_BLOCK_NUMBER] = blockNumber;
-		NFCIPConnection.printByteArray(cp);
+		if(DEBUG) NFCIPConnection.printByteArray(cp);
 		try {
 			CommandAPDU d = new CommandAPDU(cp);
-			System.out.println(d.toString());
+			if(DEBUG) System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
 			}
@@ -418,10 +420,10 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 			write[i] = blockData[i - 5];
 		}
 
-		printByteArray(write);
+		if(DEBUG) printByteArray(write);
 		try {
 			CommandAPDU d = new CommandAPDU(write);
-			System.out.println(d.toString());
+			if(DEBUG) System.out.println(d.toString());
 			if (ch == null) {
 				throw new NFCIPException("channel not open");
 			}

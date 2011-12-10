@@ -189,7 +189,7 @@ public class TestApp {
 		PrintStream ps = new PrintStream(System.out);
 		NFCIPConnection n = null;
 		try {
-			n = new NFCIPConnection();
+			n = new NFCIPConnection(true);
 			n.setLogging(ps, logLevel);
 			n.setTerminal(terminalNumber);
 			n.setMode(testMode);

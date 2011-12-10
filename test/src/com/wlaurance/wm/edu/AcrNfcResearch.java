@@ -13,6 +13,7 @@ public class AcrNfcResearch {
 		Mifare1kTagConnection c = new Mifare1kTagConnection();
 		try {
 			c.writeToCard(myURL);
+			System.out.println(c.readFromCard());
 		} catch (TagConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

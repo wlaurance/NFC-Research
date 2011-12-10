@@ -6,18 +6,18 @@ import ds.nfcip.se.NFCIPConnection;
 
 public class Mifare1kTagConnection extends TagConnection{
 	ACRNfcConnection connection;
-	static final int MIFARE1K_BLOCK_SIZE = 16; 
+	static final Integer MIFARE1K_BLOCK_SIZE = 16; 
 	static final int BLOCK_START = 1; 
 	static final int MIFARE1K_SECTOR_LENGTH = 16;
 	static final int MIFARE1K_BLOCK_PER_SECTOR = 4;
 	static final int MIFARE1K_AVAILABLE = 752;
 	public Mifare1kTagConnection(){
-		connection = new ACRNfcConnection();
+		connection = new ACRNfcConnection(false);
 	}
 	
 	public void writeToCard(String data) throws TagConnectionException{
 		byte[] bytes = data.getBytes();
-		NFCIPConnection.printByteArray(bytes);
+		if (ACRNfcConnection.DEBUG) NFCIPConnection.printByteArray(bytes);
 		int length = bytes.length;
 		if (length > MIFARE1K_AVAILABLE){
 			throw new TagConnectionException("Cannot write this much data to the card");
@@ -50,7 +50,13 @@ public class Mifare1kTagConnection extends TagConnection{
 
 	@Override
 	public String readFromCard() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<byte[]> bytes = new ArrayList<byte[]>();
+		for (Integer i = BLOCK_START; i < (MIFARE1K_SECTOR_LENGTH * MIFARE1K_BLOCK_PER_SECTOR); i++ ){
+			bytes.add(connection.readCardBinary(i.byteValue(), MIFARE1K_BLOCK_SIZE.byteValue()));
+		}
+		String message = "";
+		for (byte[] x : bytes)
+			message = message + new String(x);
+		return message;
 	}
 }
