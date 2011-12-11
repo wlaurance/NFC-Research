@@ -7,7 +7,7 @@ import javax.smartcardio.CardTerminal;
 
 public class AcrNfcResearch {
 
-	public static String myURL = "www.wlaurance.com ";
+	public static String myURL = "www.wlaurance.com";
 
 	public static void main(String args[]) {
 		Mifare1kTagConnection c = new Mifare1kTagConnection();
