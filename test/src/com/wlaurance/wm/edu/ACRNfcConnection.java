@@ -55,6 +55,16 @@ public class ACRNfcConnection {
 		}
 
 	}
+	
+	public  ResponseAPDU readCardUID(){
+		try {
+			return connection1.readCardUID();
+		} catch (NFCIPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public byte[] readCardBinary(byte block, byte numBytes) {
 		try {

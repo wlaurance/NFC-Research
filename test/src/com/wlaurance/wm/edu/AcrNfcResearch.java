@@ -1,5 +1,6 @@
 package com.wlaurance.wm.edu;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.smartcardio.CardException;
@@ -9,7 +10,7 @@ public class AcrNfcResearch {
 
 	public static String myURL = "www.wlaurance.com";
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws UnsupportedEncodingException {
 		Mifare1kTagConnection c = new Mifare1kTagConnection();
 		try {
 			c.writeToCard(myURL);

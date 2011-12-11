@@ -2,6 +2,8 @@ package com.wlaurance.wm.edu;
 
 import java.util.ArrayList;
 
+import javax.smartcardio.ResponseAPDU;
+
 import ds.nfcip.se.NFCIPConnection;
 
 public class Mifare1kTagConnection extends TagConnection {
@@ -13,7 +15,7 @@ public class Mifare1kTagConnection extends TagConnection {
 	static final int MIFARE1K_AVAILABLE = 752;
 
 	public Mifare1kTagConnection() {
-		connection = new ACRNfcConnection(false);
+		connection = new ACRNfcConnection(true);
 	}
 
 	public void writeToCard(String data) throws TagConnectionException {
@@ -66,5 +68,10 @@ public class Mifare1kTagConnection extends TagConnection {
 		}
 		
 		return one;
+	}
+
+	@Override
+	public ResponseAPDU readUIDFromCard() {
+		return connection.readCardUID();
 	}
 }
