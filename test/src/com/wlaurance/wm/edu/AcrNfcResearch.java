@@ -16,7 +16,7 @@ public class AcrNfcResearch {
 			c.writeToCard(myURL);
 			System.out.println(c.readFromCard());
 		} catch (TagConnectionException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-generate	d catch block
 			e.printStackTrace();
 		}
 	}

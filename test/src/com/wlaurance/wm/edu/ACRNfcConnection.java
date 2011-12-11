@@ -55,8 +55,8 @@ public class ACRNfcConnection {
 		}
 
 	}
-	
-	public  ResponseAPDU readCardUID(){
+
+	public ResponseAPDU readCardUID() {
 		try {
 			return connection1.readCardUID();
 		} catch (NFCIPException e) {
@@ -94,7 +94,8 @@ public class ACRNfcConnection {
 			connection1.setTerminal(terminal);
 			connection1.setLogging(System.out, this.LOG_LEVEL);
 			connection1.setMode(NFCIPConnection.INITIATOR);
-			if (DEBUG) System.out.println(connection1.getMode());
+			if (DEBUG)
+				System.out.println(connection1.getMode());
 
 		} catch (NFCIPException e) {
 			// TODO Auto-generated catch block

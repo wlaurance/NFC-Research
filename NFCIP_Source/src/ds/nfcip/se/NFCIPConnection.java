@@ -78,7 +78,7 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 			(byte) 0x82, (byte) 0x00, KEY_NUMBER, (byte) 0x06 };
 
 	private byte[] LOAD_AUTHENTICATION_KEYS = new byte[this.LOAD_AUTHENTICATION_HEADER.length
-			+ this.KEY.length];
+			+ KEY.length];
 
 	private final byte[] DO_AUTHENTICATE = { (byte) 0xff, (byte) 0x86,
 			(byte) 0x00, (byte) 0x00, (byte) 0x05, VERSION, (byte) 0x00,
@@ -103,12 +103,11 @@ public class NFCIPConnection extends NFCIPAbstract implements NFCIPInterface {
 	}
 
 	private void genAuthHeader() {
-		for (int i = 0; i < this.LOAD_AUTHENTICATION_HEADER.length
-				+ this.KEY.length; i++) {
+		for (int i = 0; i < this.LOAD_AUTHENTICATION_HEADER.length + KEY.length; i++) {
 			if (0 <= i && i < this.LOAD_AUTHENTICATION_HEADER.length) {
 				this.LOAD_AUTHENTICATION_KEYS[i] = this.LOAD_AUTHENTICATION_HEADER[i];
 			} else {
-				this.LOAD_AUTHENTICATION_KEYS[i] = this.KEY[i
+				this.LOAD_AUTHENTICATION_KEYS[i] = KEY[i
 						- this.LOAD_AUTHENTICATION_HEADER.length];
 			}
 		}

@@ -60,13 +60,13 @@ public class Mifare1kTagConnection extends TagConnection {
 			bytes.add(connection.readCardBinary(i.byteValue(),
 					MIFARE1K_BLOCK_SIZE.byteValue()));
 		}
-		
+
 		String one = "";
-		for (byte[] x : bytes){
+		for (byte[] x : bytes) {
 			String temp = new String(x);
-			one = one.concat(temp.substring(0, temp.length()-2));
+			one = one.concat(temp.substring(0, temp.length() - 2));
 		}
-		
+
 		return one;
 	}
 
