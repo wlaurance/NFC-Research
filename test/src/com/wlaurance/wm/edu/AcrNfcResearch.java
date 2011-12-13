@@ -13,10 +13,9 @@ public class AcrNfcResearch {
 	public static void main(String args[]) throws UnsupportedEncodingException {
 		Mifare1kTagConnection c = new Mifare1kTagConnection();
 		try {
-			c.writeToCard(myURL);
-			System.out.println(c.readFromCard());
+			c.writeToCard((new DataIntegrityFormat("SHA1", myURL)).getCanonicalFormat());
+			System.out.println((new DataIntegrityChecker(c.readFromCard())).doesItPass());
 		} catch (TagConnectionException e) {
-			// TODO Auto-generate	d catch block
 			e.printStackTrace();
 		}
 	}

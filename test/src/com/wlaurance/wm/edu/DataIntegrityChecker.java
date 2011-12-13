@@ -16,6 +16,8 @@ public class DataIntegrityChecker {
 		DataIntegrityFormat dif = new DataIntegrityFormat("SHA1", url);
 		System.out.println(givenMD);
 		System.out.println(dif.getMessageDigest(salt));
+		if (givenMD == null)
+			return false;
 		if(givenMD.equals(dif.getMessageDigest(salt)))
 			return true;
 		else 
